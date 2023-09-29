@@ -2,7 +2,6 @@ package com.blog.resources;
 
 import com.codahale.metrics.annotation.Timed;
 
-import io.dropwizard.db.DataSourceFactory;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
