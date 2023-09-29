@@ -3,3 +3,20 @@ logging:
   level: INFO
   loggers:
     com.blog: DEBUG
+server:
+  rootPath: /api
+database:
+  # the name of your JDBC driver
+  driverClass: org.postgresql.Driver
+  # the username
+  user: postgres
+  # the password
+  password: 1234
+  # the JDBC URL
+  url: jdbc:postgresql://localhost:5432/dropwizard-demo?currentSchema=public
+  # any properties specific to your JDBC driver:
+  properties:
+    charSet: UTF-8
+    hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+  # the SQL query to run when validating a connection's liveness
+  validationQuery: "/* MyApplication Health Check */ SELECT 1"

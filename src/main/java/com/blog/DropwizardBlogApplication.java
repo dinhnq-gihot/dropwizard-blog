@@ -1,5 +1,8 @@
 package com.blog;
 
+import com.blog.health.HelloWorldHealthCheck;
+import com.blog.resources.HelloworldResource;
+
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
@@ -22,8 +25,14 @@ public class DropwizardBlogApplication extends Application<DropwizardBlogConfigu
 
     @Override
     public void run(final DropwizardBlogConfiguration configuration,
-                    final Environment environment) {
+            final Environment environment) {
         // TODO: implement application
+        // DAOs
+
+        // Resources
+        environment.jersey().register(new HelloworldResource());
+
+        environment.healthChecks().register("hello", new HelloWorldHealthCheck());
     }
 
 }

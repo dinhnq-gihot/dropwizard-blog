@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "com.blog.DropwizardBlogApplication",
+            "args": "server config.yml"
+        }
+    ]
+}
