@@ -3,7 +3,7 @@ package com.blog.resources;
 import java.util.List;
 import java.util.OptionalLong;
 
-import com.blog.dto.user.SignupDTO;
+import com.blog.dto.auth.SignupDTO;
 import com.blog.dto.user.UpdateUserDTO;
 import com.blog.entity.UserEntity;
 import com.blog.service.IUserService;
@@ -16,8 +16,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("user")
-@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class UserResource {
     private IUserService service;
 
@@ -49,20 +49,11 @@ public class UserResource {
         return service.updateUser(id.getAsLong(), user);
     }
 
-    // @DELETE
-    // @Path("/{id}")
-    // @Timed
-    // @UnitOfWork
-    // public UserEntity deleteUser(@PathParam("id") OptionalLong id) {
-    // return service.deleteUser(id.getAsLong());
-    // }
-
-    @POST
-    @Path("sign-up")
+    @DELETE
+    @Path("/{id}")
     @Timed
     @UnitOfWork
-    public UserEntity signup(@NotNull @Valid SignupDTO user) {
-        System.out.println(user);
-        return service.signup(user);
+    public UserEntity deleteUser(@PathParam("id") OptionalLong id) {
+        return service.deleteUser(id.getAsLong());
     }
 }

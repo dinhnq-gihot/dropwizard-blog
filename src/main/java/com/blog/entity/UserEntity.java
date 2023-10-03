@@ -11,8 +11,8 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "users")
 @NamedQuery(name = "com.blog.entity.UserEntity.findAll", query = "SELECT u FROM UserEntity u")
-@NamedQuery(name = "com.blog.entity.UserEntity.findByEmail", query = "SELECT u FROM UserEntity u WHERE u.email = :email")
-@NamedQuery(name = "com.blog.entity.UserEntity.findByUsername", query = "SELECT u FROM UserEntity u WHERE u.username = :username")
+@NamedQuery(name = "com.blog.entity.UserEntity.findByEmail", query = "SELECT u FROM UserEntity u WHERE u.email =:email")
+@NamedQuery(name = "com.blog.entity.UserEntity.findByUsername", query = "SELECT u FROM UserEntity u WHERE u.username =:username")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,8 +27,8 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    // @Column(columnDefinition = "0")
-    // private Integer deleted;
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private Integer deleted;
 
     public UserEntity() {
     }
@@ -72,11 +72,11 @@ public class UserEntity {
         this.password = password;
     }
 
-    // public Integer getDeleted() {
-    // return this.deleted;
-    // }
+    public Integer getDeleted() {
+        return this.deleted;
+    }
 
-    // public void setDeleted(Integer deleted) {
-    // this.deleted = deleted;
-    // }
+    public void setDeleted(int deleted) {
+        this.deleted = deleted;
+    }
 }

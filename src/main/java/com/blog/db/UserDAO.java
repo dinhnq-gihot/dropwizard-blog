@@ -16,6 +16,7 @@ public class UserDAO extends AbstractDAO<UserEntity> {
     }
 
     public UserEntity save(UserEntity user) {
+        user.setDeleted(0);
         return this.persist(user);
     }
 

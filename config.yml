@@ -1,4 +1,6 @@
 ---
+jwtSecret: GhMCt7gZTRHQoSo989CNjUYBN/uqaUZOf0iKCLlyY54
+tokenExpiration: 600 # Token expiration time in seconds
 logging:
   level: INFO
   loggers:
@@ -13,11 +15,10 @@ database:
   # the password
   password: 1234
   # the JDBC URL
-  url: jdbc:postgresql://localhost:5432/dropwizard-demo?currentSchema=public
+  url: jdbc:postgresql://localhost:5432/blog?currentSchema=public
   # any properties specific to your JDBC driver:
   properties:
     charSet: UTF-8
     hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
-    hibernate.hbm2ddl.auto: create
   # the SQL query to run when validating a connection's liveness
   validationQuery: "/* MyApplication Health Check */ SELECT 1"
