@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.blog.converter.UserConverter;
 import com.blog.db.UserDAO;
-import com.blog.dto.user.SignupDTO;
+import com.blog.dto.auth.SignupDTO;
 import com.blog.dto.user.UpdateUserDTO;
 import com.blog.entity.UserEntity;
 import com.blog.service.IUserService;
@@ -45,25 +45,11 @@ public class UserServiceImpl implements IUserService {
         return dao.save(entity);
     }
 
-    // @Override
-    // public UserEntity deleteUser(Long id) {
-    //     UserEntity entity = getUserById(id);
-    //     entity.setDeleted(1);
-
-    //     return dao.save(entity);
-    // }
-
     @Override
-    public UserEntity signup(SignupDTO dto) {
-        UserEntity existedEmail = dao.findByEmail(dto.getEmail());
-        UserEntity existedUsername = dao.findByUsername(dto.getUsername());
+    public UserEntity deleteUser(Long id) {
+        UserEntity entity = getUserById(id);
+        entity.setDeleted(1);
 
-        if (existedEmail != null || existedUsername != null) {
-            throw new NotAcceptableException("email or username existed");
-        }
-
-        UserEntity entity = UserConverter.toEntity(dto);
         return dao.save(entity);
     }
-
 }

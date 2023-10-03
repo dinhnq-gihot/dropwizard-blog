@@ -1,6 +1,6 @@
 package com.blog.converter;
 
-import com.blog.dto.user.SignupDTO;
+import com.blog.dto.auth.SignupDTO;
 import com.blog.entity.UserEntity;
 
 public class UserConverter {
