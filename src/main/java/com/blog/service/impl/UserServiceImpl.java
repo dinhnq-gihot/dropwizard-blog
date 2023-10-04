@@ -1,8 +1,11 @@
 package com.blog.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.blog.converter.UserConverter;
 import com.blog.db.UserDAO;
+import com.blog.dto.user.ResponseUserDTO;
 import com.blog.dto.user.UpdateUserDTO;
 import com.blog.entity.RoleEntity;
 import com.blog.entity.UserEntity;
@@ -20,43 +23,64 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<UserEntity> getAllUser() {
-        return dao.findAll();
+    public List<ResponseUserDTO> getAllUser() {
+        List<UserEntity> allUserEntities = dao.findAll();
+        List<ResponseUserDTO> allUserDTOs = new ArrayList<>();
+
+        for (UserEntity entity : allUserEntities) {
+            allUserDTOs.add(UserConverter.toResponseDTO(entity));
+        }
+
+        return allUserDTOs;
     }
 
     @Override
-    public UserEntity getUserById(Long id) {
+    public ResponseUserDTO getUserById(Long id) {
         UserEntity entity = dao.findById(id);
         if (entity == null) {
-            throw new NotFoundException("user id not found");
+            return null;
         }
-        return entity;
+        ResponseUserDTO dto = UserConverter.toResponseDTO(entity);
+        return dto;
     }
 
     @Override
-    public UserEntity updateUser(Long id, UpdateUserDTO dto) {
-        UserEntity entity = getUserById(id);
+    public ResponseUserDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
+        UserEntity entity = dao.findById(id);
+        if (entity == null) {
+            return null;
+        }
+        if (updateUserDTO.getEmail() != null && dao.findByEmail(updateUserDTO.getEmail()) == null) {
+            entity.setEmail(updateUserDTO.getEmail());
+        }
+        if (updateUserDTO.getUsername() != null && dao.findByUsername(updateUserDTO.getUsername()) == null) {
+            entity.setUsername(updateUserDTO.getEmail());
+        }
+        dao.save(entity);
+        ResponseUserDTO responseUserDTO = UserConverter.toResponseDTO(entity);
 
-        if (dto.getEmail() != null && dao.findByEmail(dto.getEmail()) == null) {
-            entity.setEmail(dto.getEmail());
-        }
-        if (dto.getUsername() != null && dao.findByUsername(dto.getUsername()) == null) {
-            entity.setUsername(dto.getEmail());
-        }
-        return dao.save(entity);
+        return responseUserDTO;
     }
 
     @Override
-    public UserEntity deleteUser(Long id) {
-        UserEntity entity = getUserById(id);
+    public ResponseUserDTO deleteUser(Long id) {
+        UserEntity entity = dao.findById(id);
+        if (entity == null) {
+            return null;
+        }
         entity.setDeleted(1);
+        dao.save(entity);
 
-        return dao.save(entity);
+        ResponseUserDTO responseUserDTO = UserConverter.toResponseDTO(entity);
+        return responseUserDTO;
     }
 
     @Override
     public RoleEntity getRoleUserById(Long id) {
-        UserEntity entity = getUserById(id);
+        UserEntity entity = dao.findById(id);
+        if (entity == null) {
+            return null;
+        }
         return entity.getRole();
     }
 }

@@ -1,6 +1,7 @@
 package com.blog.converter;
 
 import com.blog.dto.auth.SignupDTO;
+import com.blog.dto.user.ResponseUserDTO;
 import com.blog.entity.UserEntity;
 
 public class UserConverter {
@@ -12,5 +13,9 @@ public class UserConverter {
         entity.setPassword(dto.getPassword());
 
         return entity;
+    }
+
+    public static ResponseUserDTO toResponseDTO(UserEntity entity) {
+        return new ResponseUserDTO(entity.getId(), entity.getUsername(), entity.getEmail(), entity.getRole().getName());
     }
 }

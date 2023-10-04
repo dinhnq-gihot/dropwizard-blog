@@ -6,13 +6,11 @@ import com.blog.db.RoleDAO;
 import com.blog.db.UserDAO;
 import com.blog.dto.auth.LoginDTO;
 import com.blog.dto.auth.SignupDTO;
+import com.blog.dto.user.ResponseUserDTO;
 import com.blog.entity.RoleEntity;
 import com.blog.entity.UserEntity;
 import com.blog.service.IAuthService;
 import org.mindrot.jbcrypt.BCrypt;
-
-import jakarta.ws.rs.NotAcceptableException;
-import jakarta.ws.rs.NotAuthorizedException;
 
 public class AuthServiceImpl implements IAuthService {
     private UserDAO userDAO;
@@ -30,12 +28,12 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
-    public UserEntity signup(SignupDTO dto) {
+    public ResponseUserDTO signup(SignupDTO dto) {
         UserEntity existedEmail = userDAO.findByEmail(dto.getEmail());
         UserEntity existedUsername = userDAO.findByUsername(dto.getUsername());
 
         if (existedEmail != null || existedUsername != null) {
-            throw new NotAcceptableException("email or username existed");
+            return null;
         }
 
         dto.setEmail(dto.getEmail().toLowerCase());
@@ -47,8 +45,10 @@ public class AuthServiceImpl implements IAuthService {
             RoleEntity roleEntity = roleDAO.findByName(dto.getRole());
             userEntity.setRole(roleEntity);
         }
+        ResponseUserDTO responseUserDTO = UserConverter.toResponseDTO(userEntity);
+        userDAO.save(userEntity);
 
-        return userDAO.save(userEntity);
+        return responseUserDTO;
     }
 
     @Override
@@ -56,12 +56,12 @@ public class AuthServiceImpl implements IAuthService {
         UserEntity entity = userDAO.findByEmail(dto.getEmail());
 
         if (entity == null) {
-            throw new NotAuthorizedException("email or password wrong");
+            return null;
         }
 
         boolean passwordMatch = BCrypt.checkpw(dto.getPassword(), entity.getPassword());
         if (!passwordMatch) {
-            throw new NotAuthorizedException("email or password wrong");
+            return null;
         }
 
         RoleEntity role = entity.getRole();

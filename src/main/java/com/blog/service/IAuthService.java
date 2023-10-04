@@ -2,10 +2,10 @@ package com.blog.service;
 
 import com.blog.dto.auth.LoginDTO;
 import com.blog.dto.auth.SignupDTO;
-import com.blog.entity.UserEntity;
+import com.blog.dto.user.ResponseUserDTO;
 
 public interface IAuthService {
-    public UserEntity signup(SignupDTO dto);
+    public ResponseUserDTO signup(SignupDTO dto);
 
     public String login(LoginDTO dto);
 }

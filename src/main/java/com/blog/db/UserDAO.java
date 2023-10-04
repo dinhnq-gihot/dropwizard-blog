@@ -2,7 +2,6 @@ package com.blog.db;
 
 import org.hibernate.SessionFactory;
 
-import com.blog.entity.RoleEntity;
 import com.blog.entity.UserEntity;
 import io.dropwizard.hibernate.AbstractDAO;
 import java.util.List;
@@ -14,7 +13,8 @@ public class UserDAO extends AbstractDAO<UserEntity> {
     }
 
     public UserEntity findById(Long id) {
-        return this.get(id);
+        UserEntity entity = this.get(id);
+        return entity.getDeleted() == 0 ? entity : null;
     }
 
     public UserEntity save(UserEntity user) {
