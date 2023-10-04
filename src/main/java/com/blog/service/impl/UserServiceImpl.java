@@ -21,6 +21,7 @@ public class UserServiceImpl implements IUserService {
     public UserServiceImpl(UserDAO dao) {
         this.dao = dao;
     }
+    
 
     @Override
     public List<ResponseUserDTO> getAllUser() {

@@ -45,8 +45,8 @@ public class AuthServiceImpl implements IAuthService {
             RoleEntity roleEntity = roleDAO.findByName(dto.getRole());
             userEntity.setRole(roleEntity);
         }
-        ResponseUserDTO responseUserDTO = UserConverter.toResponseDTO(userEntity);
-        userDAO.save(userEntity);
+        UserEntity newEntity = userDAO.save(userEntity);
+        ResponseUserDTO responseUserDTO = UserConverter.toResponseDTO(newEntity);
 
         return responseUserDTO;
     }
