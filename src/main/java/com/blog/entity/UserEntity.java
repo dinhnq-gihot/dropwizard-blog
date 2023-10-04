@@ -14,8 +14,8 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "users")
 @NamedQuery(name = "com.blog.entity.UserEntity.findAll", query = "SELECT u FROM UserEntity u WHERE u.deleted = 0")
-@NamedQuery(name = "com.blog.entity.UserEntity.findByEmail", query = "SELECT u FROM UserEntity u WHERE u.email =:email AND u.deleted = 0")
-@NamedQuery(name = "com.blog.entity.UserEntity.findByUsername", query = "SELECT u FROM UserEntity u WHERE u.username =:username AND u.deleted = 0")
+@NamedQuery(name = "com.blog.entity.UserEntity.findByEmail", query = "SELECT u FROM UserEntity u WHERE u.email =:email")
+@NamedQuery(name = "com.blog.entity.UserEntity.findByUsername", query = "SELECT u FROM UserEntity u WHERE u.username =:username")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
