@@ -2,18 +2,19 @@ package com.blog.service.impl;
 
 import java.util.List;
 
-import com.blog.converter.UserConverter;
 import com.blog.db.UserDAO;
-import com.blog.dto.auth.SignupDTO;
 import com.blog.dto.user.UpdateUserDTO;
+import com.blog.entity.RoleEntity;
 import com.blog.entity.UserEntity;
 import com.blog.service.IUserService;
 
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 
 public class UserServiceImpl implements IUserService {
     private UserDAO dao;
 
+    // @Inject
     public UserServiceImpl(UserDAO dao) {
         this.dao = dao;
     }
@@ -51,5 +52,11 @@ public class UserServiceImpl implements IUserService {
         entity.setDeleted(1);
 
         return dao.save(entity);
+    }
+
+    @Override
+    public RoleEntity getRoleUserById(Long id) {
+        UserEntity entity = getUserById(id);
+        return entity.getRole();
     }
 }
