@@ -22,14 +22,18 @@ public class JwtAuthenticator implements Authenticator<String, AuthUser> {
     @Override
     public Optional<AuthUser> authenticate(String credentials) throws AuthenticationException {
         System.out.println(credentials);
-        Claims claims = jwtUtil.parseToken(credentials);
+        try {
+            Claims claims = jwtUtil.parseToken(credentials);
 
-        // RolesAllowed rolesAnnotation = getRolesAnnotation(requestContext);
-        // Perform additional checks if needed
-        String sub = claims.get("sub", String.class);
-        String email = claims.get("email", String.class);
-        String role = claims.get("role", String.class);
+            // RolesAllowed rolesAnnotation = getRolesAnnotation(requestContext);
+            // Perform additional checks if needed
+            String sub = claims.get("sub", String.class);
+            String email = claims.get("email", String.class);
+            String role = claims.get("role", String.class);
 
-        return Optional.of(new AuthUser(sub, email, role));
+            return Optional.of(new AuthUser(sub, email, role));
+        } catch (Exception e) {
+            throw new NotAuthorizedException("");
+        }
     }
 }

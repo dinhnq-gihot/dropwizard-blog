@@ -7,8 +7,6 @@ import com.blog.db.UserDAO;
 import com.blog.entity.UserEntity;
 
 import io.dropwizard.auth.Authorizer;
-import jakarta.annotation.security.RolesAllowed;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.container.ContainerRequestContext;
 
 public class JwtAuthorizer implements Authorizer<AuthUser> {

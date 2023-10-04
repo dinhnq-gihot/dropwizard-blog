@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.OptionalLong;
 
 import com.blog.auth.principals.AuthUser;
-import com.blog.dto.auth.SignupDTO;
+import com.blog.dto.response.ErrorResponseDTO;
+import com.blog.dto.response.SuccessResponseDTO;
+import com.blog.dto.user.ResponseUserDTO;
 import com.blog.dto.user.UpdateUserDTO;
 import com.blog.entity.RoleEntity;
-import com.blog.entity.UserEntity;
 import com.blog.service.IUserService;
 import com.codahale.metrics.annotation.Timed;
 
@@ -18,6 +19,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("user")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -34,39 +36,60 @@ public class UserResource {
     @Timed
     @UnitOfWork
     @RolesAllowed("admin, user")
-    public List<UserEntity> getAllUser(@Auth AuthUser user) {
-        return service.getAllUser();
+    public Response getAllUser(@Auth AuthUser user) {
+        final List<ResponseUserDTO> allUsers = service.getAllUser();
+        final SuccessResponseDTO res = new SuccessResponseDTO(200, "OK", allUsers);
+        return Response.ok(res).build();
     }
 
     @GET
     @Path("/{id}")
     @Timed
     @UnitOfWork
-    public UserEntity getUserById(@PathParam("id") OptionalLong id) {
-        return service.getUserById(id.getAsLong());
+    public Response getUserById(@PathParam("id") OptionalLong id) {
+        ResponseUserDTO responseUserDTO = service.getUserById(id.getAsLong());
+        if (responseUserDTO == null) {
+            final ErrorResponseDTO res = new ErrorResponseDTO(404, "ERROR", "User id not found");
+            return Response.status(Response.Status.NOT_FOUND).entity(res).build();
+        }
+        final SuccessResponseDTO res = new SuccessResponseDTO(200, "OK", responseUserDTO);
+        return Response.ok(res).build();
     }
 
     @PATCH
     @Path("/{id}")
     @Timed
     @UnitOfWork
-    public UserEntity updateUser(@PathParam("id") OptionalLong id, @NotNull @Valid UpdateUserDTO user) {
-        return service.updateUser(id.getAsLong(), user);
+    public Response updateUser(@PathParam("id") OptionalLong id, @NotNull @Valid UpdateUserDTO user) {
+        ResponseUserDTO responseUserDTO = service.updateUser(id.getAsLong(), user);
+        if (responseUserDTO == null) {
+            final ErrorResponseDTO res = new ErrorResponseDTO(404, "ERROR", "User id not found");
+            return Response.status(Response.Status.NOT_FOUND).entity(res).build();
+        }
+        final SuccessResponseDTO res = new SuccessResponseDTO(200, "OK", responseUserDTO);
+        return Response.ok(res).build();
     }
 
     @DELETE
     @Path("/{id}")
     @Timed
     @UnitOfWork
-    public UserEntity deleteUser(@PathParam("id") OptionalLong id) {
-        return service.deleteUser(id.getAsLong());
+    public Response deleteUser(@PathParam("id") OptionalLong id) {
+        ResponseUserDTO responseUserDTO = service.deleteUser(id.getAsLong());
+        if (responseUserDTO == null) {
+            final ErrorResponseDTO res = new ErrorResponseDTO(404, "ERROR", "User id not found");
+            return Response.status(Response.Status.NOT_FOUND).entity(res).build();
+        }
+        final SuccessResponseDTO res = new SuccessResponseDTO(200, "OK", responseUserDTO);
+        return Response.ok(res).build();
     }
 
     @GET
     @Path("/{id}/role")
     @Timed
     @UnitOfWork
-    public RoleEntity getRoleUserById(@PathParam("id") OptionalLong id) {
-        return service.getRoleUserById(id.getAsLong());
+    public Response getRoleUserById(@PathParam("id") OptionalLong id) {
+        RoleEntity role = service.getRoleUserById(id.getAsLong());
+        return Response.ok(role).build();
     }
 }
