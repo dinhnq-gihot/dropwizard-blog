@@ -1,11 +1,16 @@
 package com.blog;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.eclipse.jetty.server.Authentication.User;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
 import com.blog.auth.JwtAuthenticationFilter;
+import com.blog.auth.JwtAuthenticator;
+import com.blog.auth.JwtAuthorizer;
 import com.blog.auth.JwtUtil;
+import com.blog.auth.principals.AuthUser;
+import com.blog.db.RoleDAO;
 import com.blog.db.UserDAO;
+import com.blog.entity.RoleEntity;
 import com.blog.entity.UserEntity;
 import com.blog.health.HelloWorldHealthCheck;
 import com.blog.resources.AuthResouce;
@@ -14,6 +19,10 @@ import com.blog.resources.UserResource;
 import com.blog.service.impl.AuthServiceImpl;
 import com.blog.service.impl.UserServiceImpl;
 
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
+import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
@@ -33,7 +42,7 @@ public class DropwizardBlogApplication extends Application<DropwizardBlogConfigu
     }
 
     private final HibernateBundle<DropwizardBlogConfiguration> hibernateBundle = new HibernateBundle<DropwizardBlogConfiguration>(
-            UserEntity.class) {
+            UserEntity.class, RoleEntity.class) {
         @Override
         public DataSourceFactory getDataSourceFactory(DropwizardBlogConfiguration configuration) {
             return configuration.getDataSourceFactory();
@@ -57,19 +66,28 @@ public class DropwizardBlogApplication extends Application<DropwizardBlogConfigu
     public void run(final DropwizardBlogConfiguration configuration,
             final Environment environment) {
         // TODO: implement application
+
         // DAOs
         final UserDAO userDao = new UserDAO(hibernateBundle.getSessionFactory());
+        final RoleDAO roleDao = new RoleDAO(hibernateBundle.getSessionFactory());
         final JwtUtil jwtUtil = new JwtUtil(configuration.getJwtSecret(), configuration.getTokenExpiration());
 
         // Filters
-        environment.jersey().register(new JwtAuthenticationFilter(jwtUtil));
+        // environment.jersey().register(new JwtAuthenticationFilter(jwtUtil));
+        environment.jersey().register(new AuthDynamicFeature(
+                new OAuthCredentialAuthFilter.Builder<AuthUser>()
+                        .setAuthenticator(new JwtAuthenticator(jwtUtil))
+                        .setAuthorizer(new JwtAuthorizer())
+                        .setPrefix("Bearer")
+                        .buildAuthFilter()));
+        environment.jersey().register(RolesAllowedDynamicFeature.class);
+        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(AuthUser.class));
 
         // Resources
         environment.jersey().register(new HelloworldResource());
         environment.jersey().register(new UserResource(new UserServiceImpl(userDao)));
-        environment.jersey().register(new AuthResouce(new AuthServiceImpl(userDao, jwtUtil)));
+        environment.jersey().register(new AuthResouce(new AuthServiceImpl(userDao, roleDao, jwtUtil)));
 
         environment.healthChecks().register("hello", new HelloWorldHealthCheck());
     }
-
 }

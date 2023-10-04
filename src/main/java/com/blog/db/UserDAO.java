@@ -1,6 +1,8 @@
 package com.blog.db;
 
 import org.hibernate.SessionFactory;
+
+import com.blog.entity.RoleEntity;
 import com.blog.entity.UserEntity;
 import io.dropwizard.hibernate.AbstractDAO;
 import java.util.List;
@@ -16,7 +18,7 @@ public class UserDAO extends AbstractDAO<UserEntity> {
     }
 
     public UserEntity save(UserEntity user) {
-        user.setDeleted(0);
+        // user.setDeleted(0);
         return this.persist(user);
     }
 

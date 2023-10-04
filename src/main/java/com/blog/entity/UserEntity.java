@@ -5,7 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity
@@ -29,6 +32,22 @@ public class UserEntity {
 
     @Column(columnDefinition = "INT DEFAULT 0")
     private Integer deleted;
+
+    @ManyToOne()
+    @JoinColumn(name = "role_id", columnDefinition = "INT DEFAULT 1")
+    private RoleEntity role;
+
+    @PrePersist
+    private void prePersist() {
+        if (role == null) {
+            this.role = new RoleEntity();
+            this.role.setId(1L); // Assuming "user" role has ID 1, adjust as needed
+            this.role.setName("user"); // Set the role name
+        }
+        if (deleted == null) {
+            deleted = 0;
+        }
+    }
 
     public UserEntity() {
     }
@@ -78,5 +97,13 @@ public class UserEntity {
 
     public void setDeleted(int deleted) {
         this.deleted = deleted;
+    }
+
+    public RoleEntity getRole() {
+        return this.role;
+    }
+
+    public void setRole(RoleEntity role) {
+        this.role = role;
     }
 }

@@ -19,13 +19,14 @@ public class JwtUtil {
         this.tokenExpiration = tokenExpiration;
     }
 
-    public String createToken(String username) {
+    public String createToken(Long id, String email, String role) {
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + tokenExpiration * 1000);
 
         return Jwts.builder()
-                .claim("username", username)
-                .setSubject(username)
+                .setSubject(id.toString())
+                .claim("email", email)
+                .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .signWith(secretKey)
