@@ -90,6 +90,7 @@ public class UserResource {
     @UnitOfWork
     public Response getRoleUserById(@PathParam("id") OptionalLong id) {
         RoleEntity role = service.getRoleUserById(id.getAsLong());
-        return Response.ok(role).build();
+        final SuccessResponseDTO res = new SuccessResponseDTO(200, "OK", role);
+        return Response.ok(res).build();
     }
 }
