@@ -13,9 +13,6 @@ import com.blog.entity.RoleEntity;
 import com.blog.entity.UserEntity;
 import com.blog.service.IUserService;
 
-import jakarta.inject.Inject;
-import jakarta.ws.rs.*;
-
 public class UserServiceImpl implements IUserService {
     private UserDAO userDao;
     private RoleDAO roleDao;
@@ -27,11 +24,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResponsePaginationDTO getAllUser(Integer page, Integer limit) {
+    public ResponsePaginationDTO getAllUser(String username, Integer page, Integer limit) {
         int offset = (page - 1) * limit;
 
-        List<UserEntity> allUserEntities = userDao.findAll();
-        List<UserEntity> paginationAllUserEntities = userDao.findWithPagination(limit, offset);
+        List<UserEntity> allUserEntities = userDao.findAllWithUsername(username);
+        List<UserEntity> paginationAllUserEntities = userDao.findAllWithPaginatedUsername(username, limit, offset);
 
         List<ResponseUserDTO> allUserDTOs = new ArrayList<>();
 
@@ -39,7 +36,7 @@ public class UserServiceImpl implements IUserService {
             allUserDTOs.add(UserConverter.toResponseDTO(entity));
         }
 
-        ResponsePaginationDTO pagination = new ResponsePaginationDTO(allUserDTOs, allUserEntities.size(), limit,
+        ResponsePaginationDTO pagination = new ResponsePaginationDTO(allUserDTOs, allUserEntities.size(),
                 (int) Math.ceil((double) allUserEntities.size() / limit), page);
 
         return pagination;

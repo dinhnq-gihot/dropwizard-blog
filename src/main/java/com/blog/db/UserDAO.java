@@ -42,4 +42,19 @@ public class UserDAO extends AbstractDAO<UserEntity> {
                         .setFirstResult(offset)
                         .setMaxResults(limit));
     }
+
+    public List<UserEntity> findAllWithPaginatedUsername(String username, Integer limit, Integer offset) {
+        return this.list(
+                namedTypedQuery("com.blog.entity.UserEntity.findAllWithUsername")
+                        .setParameter("username", "%" + username + "%")
+                        .setFirstResult(offset)
+                        .setMaxResults(limit));
+    }
+
+    public List<UserEntity> findAllWithUsername(String username) {
+        return this.list(
+                namedTypedQuery("com.blog.entity.UserEntity.findAllWithUsername")
+                        .setParameter("username", "%" + username + "%"));
+    }
+
 }

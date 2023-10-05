@@ -1,6 +1,7 @@
 package com.blog.resources;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
@@ -38,10 +39,12 @@ public class UserResource {
     @Path("")
     @Timed
     @UnitOfWork
-    @RolesAllowed("admin, user")
-    public Response getAllUser(@Auth AuthUser user, @QueryParam("page") OptionalInt page,
-            @QueryParam("limit") OptionalInt limit) {
-        final ResponsePaginationDTO allUsers = service.getAllUser(page.orElse(1), limit.orElse(5));
+    // @RolesAllowed("admin, user")
+    public Response getAllUser(@Auth AuthUser user,
+            @QueryParam("page") OptionalInt page,
+            @QueryParam("limit") OptionalInt limit,
+            @QueryParam("username") Optional<String> username) {
+        final ResponsePaginationDTO allUsers = service.getAllUser(username.orElse(""), page.orElse(1), limit.orElse(5));
         final SuccessResponseDTO res = new SuccessResponseDTO(200, "OK", allUsers);
         return Response.ok(res).build();
     }

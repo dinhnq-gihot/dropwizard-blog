@@ -3,18 +3,15 @@ package com.blog.dto.response;
 public class ResponsePaginationDTO {
     private Object items;
     private Integer totalItems;
-    private Integer itemPerPage;
     private Integer totalPages;
     private Integer currentPage;
 
     public ResponsePaginationDTO() {
     }
 
-    public ResponsePaginationDTO(Object items, Integer totalItems, Integer itemPerPage, Integer totalPages,
-            Integer currentPage) {
+    public ResponsePaginationDTO(Object items, Integer totalItems, Integer totalPages, Integer currentPage) {
         this.items = items;
         this.totalItems = totalItems;
-        this.itemPerPage = itemPerPage;
         this.totalPages = totalPages;
         this.currentPage = currentPage;
     }
@@ -33,14 +30,6 @@ public class ResponsePaginationDTO {
 
     public void setTotalItems(Integer totalItems) {
         this.totalItems = totalItems;
-    }
-
-    public Integer getItemPerPage() {
-        return this.itemPerPage;
-    }
-
-    public void setItemPerPage(Integer itemPerPage) {
-        this.itemPerPage = itemPerPage;
     }
 
     public Integer getTotalPages() {

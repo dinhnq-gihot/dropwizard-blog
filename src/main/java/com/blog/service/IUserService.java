@@ -9,7 +9,7 @@ import com.blog.entity.RoleEntity;
 import com.blog.entity.UserEntity;
 
 public interface IUserService {
-    public ResponsePaginationDTO getAllUser(Integer page, Integer limit);
+    public ResponsePaginationDTO getAllUser(String username, Integer page, Integer limit);
 
     public ResponseUserDTO getUserById(Long id);
 
