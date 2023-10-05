@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.blog.converter.UserConverter;
+import com.blog.db.RoleDAO;
 import com.blog.db.UserDAO;
-import com.blog.dto.user.ResponseUserDTO;
+import com.blog.dto.response.ResponsePaginationDTO;
+import com.blog.dto.response.ResponseUserDTO;
 import com.blog.dto.user.UpdateUserDTO;
 import com.blog.entity.RoleEntity;
 import com.blog.entity.UserEntity;
@@ -15,29 +17,37 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 
 public class UserServiceImpl implements IUserService {
-    private UserDAO dao;
+    private UserDAO userDao;
+    private RoleDAO roleDao;
 
     // @Inject
-    public UserServiceImpl(UserDAO dao) {
-        this.dao = dao;
+    public UserServiceImpl(UserDAO userDao, RoleDAO roleDao) {
+        this.userDao = userDao;
+        this.roleDao = roleDao;
     }
-    
 
     @Override
-    public List<ResponseUserDTO> getAllUser() {
-        List<UserEntity> allUserEntities = dao.findAll();
+    public ResponsePaginationDTO getAllUser(Integer page, Integer limit) {
+        int offset = (page - 1) * limit;
+
+        List<UserEntity> allUserEntities = userDao.findAll();
+        List<UserEntity> paginationAllUserEntities = userDao.findWithPagination(limit, offset);
+
         List<ResponseUserDTO> allUserDTOs = new ArrayList<>();
 
-        for (UserEntity entity : allUserEntities) {
+        for (UserEntity entity : paginationAllUserEntities) {
             allUserDTOs.add(UserConverter.toResponseDTO(entity));
         }
 
-        return allUserDTOs;
+        ResponsePaginationDTO pagination = new ResponsePaginationDTO(allUserDTOs, allUserEntities.size(), limit,
+                (int) Math.ceil((double) allUserEntities.size() / limit), page);
+
+        return pagination;
     }
 
     @Override
     public ResponseUserDTO getUserById(Long id) {
-        UserEntity entity = dao.findById(id);
+        UserEntity entity = userDao.findById(id);
         if (entity == null) {
             return null;
         }
@@ -47,17 +57,17 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResponseUserDTO updateUser(Long id, UpdateUserDTO updateUserDTO) {
-        UserEntity entity = dao.findById(id);
+        UserEntity entity = userDao.findById(id);
         if (entity == null) {
             return null;
         }
-        if (updateUserDTO.getEmail() != null && dao.findByEmail(updateUserDTO.getEmail()) == null) {
+        if (updateUserDTO.getEmail() != null && userDao.findByEmail(updateUserDTO.getEmail()) == null) {
             entity.setEmail(updateUserDTO.getEmail());
         }
-        if (updateUserDTO.getUsername() != null && dao.findByUsername(updateUserDTO.getUsername()) == null) {
+        if (updateUserDTO.getUsername() != null && userDao.findByUsername(updateUserDTO.getUsername()) == null) {
             entity.setUsername(updateUserDTO.getEmail());
         }
-        dao.save(entity);
+        userDao.save(entity);
         ResponseUserDTO responseUserDTO = UserConverter.toResponseDTO(entity);
 
         return responseUserDTO;
@@ -65,12 +75,12 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResponseUserDTO deleteUser(Long id) {
-        UserEntity entity = dao.findById(id);
+        UserEntity entity = userDao.findById(id);
         if (entity == null) {
             return null;
         }
         entity.setDeleted(1);
-        dao.save(entity);
+        userDao.save(entity);
 
         ResponseUserDTO responseUserDTO = UserConverter.toResponseDTO(entity);
         return responseUserDTO;
@@ -78,10 +88,24 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public RoleEntity getRoleUserById(Long id) {
-        UserEntity entity = dao.findById(id);
+        UserEntity entity = userDao.findById(id);
         if (entity == null) {
             return null;
         }
         return entity.getRole();
+    }
+
+    @Override
+    public ResponseUserDTO updateRoleOfUser(Long userId, String roleName) {
+        RoleEntity role = this.roleDao.findByName(roleName);
+        UserEntity user = this.userDao.findById(userId);
+
+        if (role == null || user == null) {
+            return null;
+        }
+        user.setRole(role);
+        userDao.save(user);
+
+        return UserConverter.toResponseDTO(user);
     }
 }

@@ -1,4 +1,4 @@
-package com.blog.dto.user;
+package com.blog.dto.response;
 
 public class ResponseUserDTO {
     private Long id;
