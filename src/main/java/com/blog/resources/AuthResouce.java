@@ -3,9 +3,8 @@ package com.blog.resources;
 import com.blog.dto.auth.LoginDTO;
 import com.blog.dto.auth.SignupDTO;
 import com.blog.dto.response.ErrorResponseDTO;
+import com.blog.dto.response.ResponseUserDTO;
 import com.blog.dto.response.SuccessResponseDTO;
-import com.blog.dto.user.ResponseUserDTO;
-import com.blog.entity.UserEntity;
 import com.blog.service.IAuthService;
 import com.codahale.metrics.annotation.Timed;
 

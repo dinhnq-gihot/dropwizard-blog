@@ -85,7 +85,7 @@ public class DropwizardBlogApplication extends Application<DropwizardBlogConfigu
 
         // Resources
         environment.jersey().register(new HelloworldResource());
-        environment.jersey().register(new UserResource(new UserServiceImpl(userDao)));
+        environment.jersey().register(new UserResource(new UserServiceImpl(userDao, roleDao)));
         environment.jersey().register(new AuthResouce(new AuthServiceImpl(userDao, roleDao, jwtUtil)));
 
         environment.healthChecks().register("hello", new HelloWorldHealthCheck());

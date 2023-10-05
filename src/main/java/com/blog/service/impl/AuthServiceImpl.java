@@ -6,7 +6,7 @@ import com.blog.db.RoleDAO;
 import com.blog.db.UserDAO;
 import com.blog.dto.auth.LoginDTO;
 import com.blog.dto.auth.SignupDTO;
-import com.blog.dto.user.ResponseUserDTO;
+import com.blog.dto.response.ResponseUserDTO;
 import com.blog.entity.RoleEntity;
 import com.blog.entity.UserEntity;
 import com.blog.service.IAuthService;
