@@ -1,12 +1,9 @@
 package com.blog.service;
 
-import java.util.List;
-
 import com.blog.dto.response.ResponsePaginationDTO;
 import com.blog.dto.response.ResponseUserDTO;
 import com.blog.dto.user.UpdateUserDTO;
 import com.blog.entity.RoleEntity;
-import com.blog.entity.UserEntity;
 
 public interface IUserService {
     public ResponsePaginationDTO getAllUser(String username, Integer page, Integer limit);

@@ -5,12 +5,14 @@ public class ResponseUserDTO {
     private String username;
     private String email;
     private String role;
+    private String image;
 
-    public ResponseUserDTO(Long id, String username, String email, String role) {
+    public ResponseUserDTO(Long id, String username, String email, String role, String image) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.role = role;
+        this.image = image;
     }
 
     public Long getId() {
@@ -44,4 +46,13 @@ public class ResponseUserDTO {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public String getImage() {
+        return this.image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
 }

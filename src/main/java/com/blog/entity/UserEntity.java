@@ -40,6 +40,9 @@ public class UserEntity {
     @JoinColumn(name = "role_id", columnDefinition = "INT DEFAULT 1")
     private RoleEntity role;
 
+    @Column(nullable = true)
+    private String profileImage;
+
     @PrePersist
     private void prePersist() {
         if (role == null) {
@@ -60,6 +63,17 @@ public class UserEntity {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public UserEntity(Long id, String username, String email, String password, Integer deleted, RoleEntity role,
+            String profileImage) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.deleted = deleted;
+        this.role = role;
+        this.profileImage = profileImage;
     }
 
     public Long getId() {
@@ -108,5 +122,13 @@ public class UserEntity {
 
     public void setRole(RoleEntity role) {
         this.role = role;
+    }
+
+    public String getProfileImage() {
+        return this.profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }

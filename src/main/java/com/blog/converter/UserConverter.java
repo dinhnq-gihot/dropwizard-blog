@@ -16,6 +16,6 @@ public class UserConverter {
     }
 
     public static ResponseUserDTO toResponseDTO(UserEntity entity) {
-        return new ResponseUserDTO(entity.getId(), entity.getUsername(), entity.getEmail(), entity.getRole().getName());
+        return new ResponseUserDTO(entity.getId(), entity.getUsername(), entity.getEmail(), entity.getRole().getName(), entity.getProfileImage());
     }
 }

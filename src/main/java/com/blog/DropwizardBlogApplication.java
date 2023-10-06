@@ -1,9 +1,7 @@
 package com.blog;
 
-import org.eclipse.jetty.server.Authentication.User;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
-import com.blog.auth.JwtAuthenticationFilter;
 import com.blog.auth.JwtAuthenticator;
 import com.blog.auth.JwtAuthorizer;
 import com.blog.auth.JwtUtil;
@@ -15,13 +13,14 @@ import com.blog.entity.UserEntity;
 import com.blog.health.HelloWorldHealthCheck;
 import com.blog.resources.AuthResouce;
 import com.blog.resources.HelloworldResource;
+import com.blog.resources.ImageUploadResource;
 import com.blog.resources.UserResource;
 import com.blog.service.impl.AuthServiceImpl;
+import com.blog.service.impl.ImageServiceImpl;
 import com.blog.service.impl.UserServiceImpl;
 
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
-import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
@@ -29,6 +28,7 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.migrations.MigrationsBundle;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 public class DropwizardBlogApplication extends Application<DropwizardBlogConfiguration> {
 
@@ -51,7 +51,6 @@ public class DropwizardBlogApplication extends Application<DropwizardBlogConfigu
 
     @Override
     public void initialize(final Bootstrap<DropwizardBlogConfiguration> bootstrap) {
-        // TODO: application initialization
         bootstrap.addBundle(hibernateBundle);
         bootstrap.addBundle(new MigrationsBundle<DropwizardBlogConfiguration>() {
             @Override
@@ -65,7 +64,8 @@ public class DropwizardBlogApplication extends Application<DropwizardBlogConfigu
     @Override
     public void run(final DropwizardBlogConfiguration configuration,
             final Environment environment) {
-        // TODO: implement application
+        // Register the MultiPartFeature to enable multipart/form-data support
+        environment.jersey().register(MultiPartFeature.class);
 
         // DAOs
         final UserDAO userDao = new UserDAO(hibernateBundle.getSessionFactory());
@@ -87,6 +87,7 @@ public class DropwizardBlogApplication extends Application<DropwizardBlogConfigu
         environment.jersey().register(new HelloworldResource());
         environment.jersey().register(new UserResource(new UserServiceImpl(userDao, roleDao)));
         environment.jersey().register(new AuthResouce(new AuthServiceImpl(userDao, roleDao, jwtUtil)));
+        environment.jersey().register(new ImageUploadResource(new ImageServiceImpl(userDao)));
 
         environment.healthChecks().register("hello", new HelloWorldHealthCheck());
     }
