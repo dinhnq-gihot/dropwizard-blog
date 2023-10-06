@@ -63,11 +63,11 @@ public class UserResource {
     }
 
     @PATCH
-    @Path("/{id}")
+    @Path("")
     @Timed
     @UnitOfWork
-    public Response updateUser(@PathParam("id") OptionalLong id, @NotNull @Valid UpdateUserDTO user) {
-        ResponseUserDTO responseUserDTO = service.updateUser(id.getAsLong(), user);
+    public Response updateUser(@Auth AuthUser currentUser, @NotNull @Valid UpdateUserDTO user) {
+        ResponseUserDTO responseUserDTO = service.updateUser(Long.parseLong(currentUser.getName()), user);
         if (responseUserDTO == null) {
             final ErrorResponseDTO res = new ErrorResponseDTO(404, "ERROR", "User id not found");
             return Response.status(Response.Status.NOT_FOUND).entity(res).build();
@@ -79,6 +79,7 @@ public class UserResource {
     @DELETE
     @Path("/{id}")
     @Timed
+    @RolesAllowed("admin")
     @UnitOfWork
     public Response deleteUser(@PathParam("id") OptionalLong id) {
         ResponseUserDTO responseUserDTO = service.deleteUser(id.getAsLong());

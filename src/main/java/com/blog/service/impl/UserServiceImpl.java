@@ -62,7 +62,7 @@ public class UserServiceImpl implements IUserService {
             entity.setEmail(updateUserDTO.getEmail());
         }
         if (updateUserDTO.getUsername() != null && userDao.findByUsername(updateUserDTO.getUsername()) == null) {
-            entity.setUsername(updateUserDTO.getEmail());
+            entity.setUsername(updateUserDTO.getUsername());
         }
         userDao.save(entity);
         ResponseUserDTO responseUserDTO = UserConverter.toResponseDTO(entity);

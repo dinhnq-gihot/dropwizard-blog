@@ -1,5 +1,8 @@
 package com.blog.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
@@ -34,7 +38,7 @@ public class UserEntity {
     private String password;
 
     @Column(columnDefinition = "INT DEFAULT 0")
-    private Integer deleted;
+    private Integer deleted = 0;
 
     @ManyToOne()
     @JoinColumn(name = "role_id", columnDefinition = "INT DEFAULT 1")
@@ -43,15 +47,13 @@ public class UserEntity {
     @Column(nullable = true)
     private String profileImage;
 
+    @OneToMany(mappedBy = "user")
+    private List<BlogEntity> blogs = new ArrayList<>();
+
     @PrePersist
     private void prePersist() {
         if (role == null) {
-            this.role = new RoleEntity();
-            this.role.setId(1L); // Assuming "user" role has ID 1, adjust as needed
-            this.role.setName("user"); // Set the role name
-        }
-        if (deleted == null) {
-            deleted = 0;
+            this.role = new RoleEntity(1L, "user");
         }
     }
 
@@ -66,7 +68,7 @@ public class UserEntity {
     }
 
     public UserEntity(Long id, String username, String email, String password, Integer deleted, RoleEntity role,
-            String profileImage) {
+            String profileImage, List<BlogEntity> blogs) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -74,6 +76,7 @@ public class UserEntity {
         this.deleted = deleted;
         this.role = role;
         this.profileImage = profileImage;
+        this.blogs = blogs;
     }
 
     public Long getId() {

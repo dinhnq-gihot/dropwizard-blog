@@ -6,16 +6,20 @@ import com.blog.auth.JwtAuthenticator;
 import com.blog.auth.JwtAuthorizer;
 import com.blog.auth.JwtUtil;
 import com.blog.auth.principals.AuthUser;
+import com.blog.db.BlogDAO;
 import com.blog.db.RoleDAO;
 import com.blog.db.UserDAO;
+import com.blog.entity.BlogEntity;
 import com.blog.entity.RoleEntity;
 import com.blog.entity.UserEntity;
 import com.blog.health.HelloWorldHealthCheck;
 import com.blog.resources.AuthResouce;
+import com.blog.resources.BlogResource;
 import com.blog.resources.HelloworldResource;
 import com.blog.resources.ImageUploadResource;
 import com.blog.resources.UserResource;
 import com.blog.service.impl.AuthServiceImpl;
+import com.blog.service.impl.BlogServiceImpl;
 import com.blog.service.impl.ImageServiceImpl;
 import com.blog.service.impl.UserServiceImpl;
 
@@ -42,7 +46,7 @@ public class DropwizardBlogApplication extends Application<DropwizardBlogConfigu
     }
 
     private final HibernateBundle<DropwizardBlogConfiguration> hibernateBundle = new HibernateBundle<DropwizardBlogConfiguration>(
-            UserEntity.class, RoleEntity.class) {
+            UserEntity.class, RoleEntity.class, BlogEntity.class) {
         @Override
         public DataSourceFactory getDataSourceFactory(DropwizardBlogConfiguration configuration) {
             return configuration.getDataSourceFactory();
@@ -70,6 +74,7 @@ public class DropwizardBlogApplication extends Application<DropwizardBlogConfigu
         // DAOs
         final UserDAO userDao = new UserDAO(hibernateBundle.getSessionFactory());
         final RoleDAO roleDao = new RoleDAO(hibernateBundle.getSessionFactory());
+        final BlogDAO blogDao = new BlogDAO(hibernateBundle.getSessionFactory());
         final JwtUtil jwtUtil = new JwtUtil(configuration.getJwtSecret(), configuration.getTokenExpiration());
 
         // Filters
@@ -88,6 +93,7 @@ public class DropwizardBlogApplication extends Application<DropwizardBlogConfigu
         environment.jersey().register(new UserResource(new UserServiceImpl(userDao, roleDao)));
         environment.jersey().register(new AuthResouce(new AuthServiceImpl(userDao, roleDao, jwtUtil)));
         environment.jersey().register(new ImageUploadResource(new ImageServiceImpl(userDao)));
+        environment.jersey().register(new BlogResource(new BlogServiceImpl(blogDao, userDao)));
 
         environment.healthChecks().register("hello", new HelloWorldHealthCheck());
     }
